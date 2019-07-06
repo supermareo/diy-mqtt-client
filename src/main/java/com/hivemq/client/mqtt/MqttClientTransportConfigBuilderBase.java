@@ -65,6 +65,8 @@ public interface MqttClientTransportConfigBuilderBase<B extends MqttClientTransp
      */
     @NotNull B serverPort(int port);
 
+    @NotNull B localHost(String host);
+
     /**
      * Sets the {@link MqttClientTransportConfig#getSslConfig() secure transport configuration} to the default
      * configuration.

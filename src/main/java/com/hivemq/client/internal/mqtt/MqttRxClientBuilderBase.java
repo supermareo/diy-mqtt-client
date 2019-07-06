@@ -99,6 +99,12 @@ public abstract class MqttRxClientBuilderBase<B extends MqttRxClientBuilderBase<
     }
 
     @Override
+    public @NotNull B localHost(String host) {
+        transportConfig = null;
+        return super.localHost(host);
+    }
+
+    @Override
     public @NotNull B sslWithDefaultConfig() {
         transportConfig = null;
         return super.sslWithDefaultConfig();

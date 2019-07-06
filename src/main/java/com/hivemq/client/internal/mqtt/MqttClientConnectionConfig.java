@@ -24,11 +24,13 @@ import com.hivemq.client.mqtt.datatypes.MqttQos;
 import com.hivemq.client.mqtt.mqtt3.Mqtt3ClientConnectionConfig;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5ClientConnectionConfig;
 import com.hivemq.client.mqtt.mqtt5.auth.Mqtt5EnhancedAuthMechanism;
-import io.netty.channel.Channel;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
+
+import io.netty.channel.Channel;
 
 /**
  * @author Silvio Giebl
@@ -83,7 +85,7 @@ public class MqttClientConnectionConfig
             final boolean sharedSubscriptionAvailable,
             final boolean subscriptionIdentifiersAvailable,
             final @NotNull Channel channel) {
-    // @formatter:on
+        // @formatter:on
 
         this.transportConfig = transportConfig;
         this.keepAlive = (short) keepAlive;
@@ -243,4 +245,5 @@ public class MqttClientConnectionConfig
     public @NotNull Channel getChannel() {
         return channel;
     }
+
 }

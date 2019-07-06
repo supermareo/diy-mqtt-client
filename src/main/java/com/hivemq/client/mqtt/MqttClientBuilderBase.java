@@ -23,6 +23,7 @@ import com.hivemq.client.mqtt.lifecycle.MqttClientAutoReconnect;
 import com.hivemq.client.mqtt.lifecycle.MqttClientAutoReconnectBuilder;
 import com.hivemq.client.mqtt.lifecycle.MqttClientConnectedListener;
 import com.hivemq.client.mqtt.lifecycle.MqttClientDisconnectedListener;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -88,6 +89,8 @@ public interface MqttClientBuilderBase<B extends MqttClientBuilderBase<B>> {
      * @return the builder.
      */
     @NotNull B serverPort(int port);
+
+    @NotNull B localHost(String localHost);
 
     /**
      * @deprecated use {@link #sslWithDefaultConfig()}.

@@ -19,6 +19,7 @@ package com.hivemq.client.mqtt;
 
 import com.hivemq.client.annotations.DoNotImplement;
 import com.hivemq.client.internal.mqtt.MqttClientTransportConfigImplBuilder;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.net.InetSocketAddress;
@@ -46,6 +47,8 @@ public interface MqttClientTransportConfig {
      * @return the server address to connect to.
      */
     @NotNull InetSocketAddress getServerAddress();
+
+    String getLocalHost();
 
     /**
      * @return the optional secure transport configuration.

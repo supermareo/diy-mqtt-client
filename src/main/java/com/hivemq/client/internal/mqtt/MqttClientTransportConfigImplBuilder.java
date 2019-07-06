@@ -21,6 +21,7 @@ import com.hivemq.client.internal.util.Checks;
 import com.hivemq.client.mqtt.MqttClientSslConfig;
 import com.hivemq.client.mqtt.MqttClientTransportConfigBuilder;
 import com.hivemq.client.mqtt.MqttWebSocketConfig;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +29,11 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.function.Function;
 
-import static com.hivemq.client.mqtt.MqttClient.*;
+import static com.hivemq.client.mqtt.MqttClient.DEFAULT_SERVER_HOST;
+import static com.hivemq.client.mqtt.MqttClient.DEFAULT_SERVER_PORT;
+import static com.hivemq.client.mqtt.MqttClient.DEFAULT_SERVER_PORT_SSL;
+import static com.hivemq.client.mqtt.MqttClient.DEFAULT_SERVER_PORT_WEBSOCKET;
+import static com.hivemq.client.mqtt.MqttClient.DEFAULT_SERVER_PORT_WEBSOCKET_SSL;
 
 /**
  * @author Silvio Giebl
@@ -37,11 +42,13 @@ public abstract class MqttClientTransportConfigImplBuilder<B extends MqttClientT
 
     private @Nullable InetSocketAddress serverAddress;
     private @NotNull Object serverHost = DEFAULT_SERVER_HOST; // String or InetAddress
+    private String localHost = null;
     private int serverPort = -1;
     private @Nullable MqttClientSslConfigImpl sslConfig;
     private @Nullable MqttWebSocketConfigImpl webSocketConfig;
 
-    MqttClientTransportConfigImplBuilder() {}
+    MqttClientTransportConfigImplBuilder() {
+    }
 
     MqttClientTransportConfigImplBuilder(final @NotNull MqttClientTransportConfigImpl transportConfig) {
         set(transportConfig);
@@ -50,6 +57,7 @@ public abstract class MqttClientTransportConfigImplBuilder<B extends MqttClientT
     MqttClientTransportConfigImplBuilder(final @NotNull MqttClientTransportConfigImplBuilder<?> builder) {
         serverAddress = builder.serverAddress;
         serverHost = builder.serverHost;
+        localHost = builder.localHost;
         serverPort = builder.serverPort;
         sslConfig = builder.sslConfig;
         webSocketConfig = builder.webSocketConfig;
@@ -84,6 +92,11 @@ public abstract class MqttClientTransportConfigImplBuilder<B extends MqttClientT
             serverPort = serverAddress.getPort();
             serverAddress = null;
         }
+    }
+
+    public @NotNull B localHost(String host) {
+        this.localHost = host;
+        return self();
     }
 
     public @NotNull B serverPort(final int port) {
@@ -156,13 +169,14 @@ public abstract class MqttClientTransportConfigImplBuilder<B extends MqttClientT
     }
 
     @NotNull MqttClientTransportConfigImpl buildTransportConfig() {
-        return new MqttClientTransportConfigImpl(getServerAddress(), sslConfig, webSocketConfig);
+        return new MqttClientTransportConfigImpl(getServerAddress(), localHost, sslConfig, webSocketConfig);
     }
 
     public static class Default extends MqttClientTransportConfigImplBuilder<Default>
             implements MqttClientTransportConfigBuilder {
 
-        public Default() {}
+        public Default() {
+        }
 
         Default(final @NotNull MqttClientTransportConfigImpl transportConfig) {
             super(transportConfig);

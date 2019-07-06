@@ -21,6 +21,7 @@ import com.hivemq.client.mqtt.MqttClient;
 import com.hivemq.client.mqtt.MqttClientSslConfig;
 import com.hivemq.client.mqtt.MqttClientTransportConfig;
 import com.hivemq.client.mqtt.MqttWebSocketConfig;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,18 +34,20 @@ import java.util.Optional;
 public class MqttClientTransportConfigImpl implements MqttClientTransportConfig {
 
     public static final @NotNull MqttClientTransportConfigImpl DEFAULT = new MqttClientTransportConfigImpl(
-            InetSocketAddress.createUnresolved(MqttClient.DEFAULT_SERVER_HOST, MqttClient.DEFAULT_SERVER_PORT), null,
+            InetSocketAddress.createUnresolved(MqttClient.DEFAULT_SERVER_HOST, MqttClient.DEFAULT_SERVER_PORT), null, null,
             null);
 
     private final @NotNull InetSocketAddress serverAddress;
+    private final String localHost;
     private final @Nullable MqttClientSslConfigImpl sslConfig;
     private final @Nullable MqttWebSocketConfigImpl webSocketConfig;
 
     MqttClientTransportConfigImpl(
-            final @NotNull InetSocketAddress serverAddress, final @Nullable MqttClientSslConfigImpl sslConfig,
+            final @NotNull InetSocketAddress serverAddress, String localHost, final @Nullable MqttClientSslConfigImpl sslConfig,
             final @Nullable MqttWebSocketConfigImpl webSocketConfig) {
 
         this.serverAddress = serverAddress;
+        this.localHost = localHost;
         this.sslConfig = sslConfig;
         this.webSocketConfig = webSocketConfig;
     }
@@ -52,6 +55,11 @@ public class MqttClientTransportConfigImpl implements MqttClientTransportConfig 
     @Override
     public @NotNull InetSocketAddress getServerAddress() {
         return serverAddress;
+    }
+
+    @Override
+    public String getLocalHost() {
+        return localHost;
     }
 
     @Override

@@ -30,11 +30,13 @@ import com.hivemq.client.mqtt.lifecycle.MqttClientDisconnectedContext;
 import com.hivemq.client.mqtt.lifecycle.MqttClientDisconnectedListener;
 import com.hivemq.client.mqtt.lifecycle.MqttDisconnectSource;
 import com.hivemq.client.mqtt.mqtt5.message.connect.connack.Mqtt5ConnAck;
+
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.EventLoop;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.internal.disposables.EmptyDisposable;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -83,6 +85,10 @@ public class MqttConnAckSingle extends Single<Mqtt5ConnAck> {
                     .connAckFlow(flow)
                     .build()
                     .bootstrap();
+
+            if (flow.getTransportConfig().getLocalHost() != null) {
+                bootstrap.localAddress(flow.getTransportConfig().getLocalHost(), 0);
+            }
 
             bootstrap.group(eventLoop).connect(flow.getTransportConfig().getServerAddress()).addListener(future -> {
                 final Throwable cause = future.cause();
