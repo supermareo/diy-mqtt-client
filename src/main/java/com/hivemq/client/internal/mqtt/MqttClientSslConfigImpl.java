@@ -18,11 +18,13 @@ package com.hivemq.client.internal.mqtt;
 
 import com.hivemq.client.internal.util.collections.ImmutableList;
 import com.hivemq.client.mqtt.MqttClientSslConfig;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -34,24 +36,27 @@ import java.util.Optional;
 public class MqttClientSslConfigImpl implements MqttClientSslConfig {
 
     static final @NotNull MqttClientSslConfigImpl DEFAULT =
-            new MqttClientSslConfigImpl(null, null, null, null, DEFAULT_HANDSHAKE_TIMEOUT_MS);
+            new MqttClientSslConfigImpl(null, null, null, null, DEFAULT_HANDSHAKE_TIMEOUT_MS, false);
 
     private final @Nullable KeyManagerFactory keyManagerFactory;
     private final @Nullable TrustManagerFactory trustManagerFactory;
     private final @Nullable ImmutableList<String> cipherSuites;
     private final @Nullable ImmutableList<String> protocols;
     private final long handshakeTimeoutMs;
+    //默认是不忽略证书的，如果想要忽略证书，设置为true
+    private final boolean ignore;
 
     MqttClientSslConfigImpl(
             final @Nullable KeyManagerFactory keyManagerFactory,
             final @Nullable TrustManagerFactory trustManagerFactory, final @Nullable ImmutableList<String> cipherSuites,
-            final @Nullable ImmutableList<String> protocols, final long handshakeTimeoutMs) {
+            final @Nullable ImmutableList<String> protocols, final long handshakeTimeoutMs, boolean ignore) {
 
         this.keyManagerFactory = keyManagerFactory;
         this.trustManagerFactory = trustManagerFactory;
         this.cipherSuites = cipherSuites;
         this.protocols = protocols;
         this.handshakeTimeoutMs = handshakeTimeoutMs;
+        this.ignore = ignore;
     }
 
     @Override
@@ -96,6 +101,11 @@ public class MqttClientSslConfigImpl implements MqttClientSslConfig {
     }
 
     @Override
+    public boolean isIgnore() {
+        return ignore;
+    }
+
+    @Override
     public @NotNull MqttClientSslConfigImplBuilder.Default extend() {
         return new MqttClientSslConfigImplBuilder.Default(this);
     }
@@ -113,7 +123,7 @@ public class MqttClientSslConfigImpl implements MqttClientSslConfig {
         return Objects.equals(keyManagerFactory, that.keyManagerFactory) &&
                 Objects.equals(trustManagerFactory, that.trustManagerFactory) &&
                 Objects.equals(cipherSuites, that.cipherSuites) && Objects.equals(protocols, that.protocols) &&
-                (handshakeTimeoutMs == that.handshakeTimeoutMs);
+                (handshakeTimeoutMs == that.handshakeTimeoutMs) && (ignore == that.ignore);
     }
 
     @Override
@@ -123,6 +133,7 @@ public class MqttClientSslConfigImpl implements MqttClientSslConfig {
         result = 31 * result + Objects.hashCode(cipherSuites);
         result = 31 * result + Objects.hashCode(protocols);
         result = 31 * result + Long.hashCode(handshakeTimeoutMs);
+        result = 31 * result + Boolean.hashCode(ignore);
         return result;
     }
 }

@@ -18,8 +18,10 @@ package com.hivemq.client.internal.mqtt.handler.ssl;
 
 import com.hivemq.client.internal.mqtt.MqttClientSslConfigImpl;
 import com.hivemq.client.internal.util.collections.ImmutableList;
+
 import io.netty.channel.Channel;
 import io.netty.handler.ssl.*;
+
 import org.jetbrains.annotations.NotNull;
 
 import javax.net.ssl.SSLEngine;
@@ -51,8 +53,13 @@ public final class SslUtil {
 
     static @NotNull SSLEngine createSslEngine(
             final @NotNull Channel channel, final @NotNull MqttClientSslConfigImpl sslConfig) throws SSLException {
-
-        final SSLEngine sslEngine = createSslContext(sslConfig).newEngine(channel.alloc());
+        final SSLEngine sslEngine;
+        if (sslConfig.isIgnore()){
+            //忽略ssl验证
+            sslEngine = SecureSocketSslContextFactory.getSslContext().createSSLEngine();
+        }else {
+            sslEngine = createSslContext(sslConfig).newEngine(channel.alloc());
+        }
 
         sslEngine.setUseClientMode(true);
 
@@ -77,5 +84,6 @@ public final class SslUtil {
         return sslContextBuilder.build();
     }
 
-    private SslUtil() {}
+    private SslUtil() {
+    }
 }

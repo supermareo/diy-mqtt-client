@@ -21,11 +21,13 @@ import com.hivemq.client.internal.util.Checks;
 import com.hivemq.client.internal.util.collections.ImmutableList;
 import com.hivemq.client.mqtt.MqttClientSslConfig;
 import com.hivemq.client.mqtt.MqttClientSslConfigBuilder;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
+
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -40,8 +42,10 @@ public abstract class MqttClientSslConfigImplBuilder<B extends MqttClientSslConf
     private @Nullable ImmutableList<String> cipherSuites;
     private @Nullable ImmutableList<String> protocols;
     private long handshakeTimeoutMs = MqttClientSslConfig.DEFAULT_HANDSHAKE_TIMEOUT_MS;
+    private boolean ignore;
 
-    MqttClientSslConfigImplBuilder() {}
+    MqttClientSslConfigImplBuilder() {
+    }
 
     MqttClientSslConfigImplBuilder(final @Nullable MqttClientSslConfigImpl sslConfig) {
         if (sslConfig != null) {
@@ -50,6 +54,7 @@ public abstract class MqttClientSslConfigImplBuilder<B extends MqttClientSslConf
             cipherSuites = sslConfig.getRawCipherSuites();
             protocols = sslConfig.getRawProtocols();
             handshakeTimeoutMs = sslConfig.getHandshakeTimeoutMs();
+            ignore = sslConfig.isIgnore();
         }
     }
 
@@ -81,14 +86,20 @@ public abstract class MqttClientSslConfigImplBuilder<B extends MqttClientSslConf
         return self();
     }
 
+    public @NotNull B ignore(boolean ignore) {
+        this.ignore = ignore;
+        return self();
+    }
+
     public @NotNull MqttClientSslConfigImpl build() {
         return new MqttClientSslConfigImpl(
-                keyManagerFactory, trustManagerFactory, cipherSuites, protocols, handshakeTimeoutMs);
+                keyManagerFactory, trustManagerFactory, cipherSuites, protocols, handshakeTimeoutMs, ignore);
     }
 
     public static class Default extends MqttClientSslConfigImplBuilder<Default> implements MqttClientSslConfigBuilder {
 
-        public Default() {}
+        public Default() {
+        }
 
         Default(final @Nullable MqttClientSslConfigImpl sslConfig) {
             super(sslConfig);

@@ -81,6 +81,8 @@ public interface MqttClientSslConfig {
      */
     long getHandshakeTimeoutMs();
 
+    boolean isIgnore();
+
     /**
      * Creates a builder for extending this secure transport configuration.
      *

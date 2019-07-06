@@ -80,4 +80,6 @@ public interface MqttClientSslConfigBuilderBase<B extends MqttClientSslConfigBui
      * @return the builder.
      */
     @NotNull B handshakeTimeout(long timeout, @NotNull TimeUnit timeUnit);
+
+    @NotNull B ignore(boolean ignore);
 }
